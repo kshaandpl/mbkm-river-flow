@@ -46,7 +46,7 @@
       max-width: none;
       margin: 12px auto;
       display: grid;
-      grid-template-columns: 72px minmax(0, 1fr);
+      grid-template-columns: 280px minmax(0, 1fr);
       min-height: calc(100vh - 36px);
       background: rgba(255,255,255,.48);
       border: 1px solid rgba(255,255,255,.7);
@@ -67,7 +67,7 @@
       border-radius: 34px 0 0 34px;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: stretch;
       gap: 14px;
       z-index: 20;
       backdrop-filter: blur(18px);
@@ -91,17 +91,15 @@
     }
 
     .menu-popover {
-      position: absolute;
-      left: 72px;
-      top: 18px;
-      width: 244px;
-      padding: 18px;
+      position: static;
+      width: 100%;
+      padding: 6px;
       border-radius: 24px;
-      background: rgba(255,255,255,.94);
-      border: 1px solid rgba(255,255,255,.72);
-      box-shadow: 0 24px 70px rgba(31, 62, 122, .2);
-      backdrop-filter: blur(18px);
-      display: none;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      backdrop-filter: none;
+      display: block;
     }
 
     .menu-popover.active { display: block; }
@@ -750,7 +748,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 890px;
+      min-width: 1080px;
     }
 
     th, td {
@@ -912,9 +910,94 @@
       line-height: 1.5;
     }
 
+
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .settings-note {
+      border-radius: 24px;
+      padding: 18px;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.72);
+      box-shadow: 0 16px 34px rgba(31, 62, 122, .07);
+    }
+
+    .settings-note h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      letter-spacing: -.04em;
+    }
+
+    .settings-note p {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .config-table input[type="number"] {
+      width: 130px;
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 13px;
+      padding: 10px 11px;
+      font-family: inherit;
+      font-weight: 800;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .save-config-btn {
+      border: 0;
+      border-radius: 13px;
+      padding: 10px 13px;
+      font-family: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      color: white;
+      background: linear-gradient(135deg, #2f80ed, #00a6c8);
+      box-shadow: 0 10px 24px rgba(47,128,237,.2);
+    }
+
+    .save-config-btn:disabled {
+      cursor: not-allowed;
+      opacity: .65;
+      box-shadow: none;
+    }
+
+    .config-message {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #f6f9ff;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
+    .config-message.success {
+      color: var(--normal);
+      background: color-mix(in srgb, var(--normal) 10%, white);
+      border-color: color-mix(in srgb, var(--normal) 22%, white);
+    }
+
+    .config-message.error {
+      color: var(--bahaya);
+      background: color-mix(in srgb, var(--bahaya) 8%, white);
+      border-color: color-mix(in srgb, var(--bahaya) 20%, white);
+    }
+
     @media (max-width: 1280px) {
       .summary-grid { grid-template-columns: repeat(3, 1fr); }
       .filters { grid-template-columns: 1fr; }
+      .settings-grid { grid-template-columns: 1fr; }
       .custom-range { flex-wrap: wrap; }
     }
 
@@ -938,9 +1021,7 @@
       }
 
       .menu-popover {
-        left: 12px;
-        top: 74px;
-        width: min(330px, calc(100vw - 42px));
+        width: 100%;
       }
 
       .nav {
@@ -970,9 +1051,7 @@
 <body>
   <div class="shell">
     <aside class="sidebar">
-      <button class="menu-toggle" id="sidebarMenuBtn" aria-label="Buka menu">•••</button>
-
-      <div class="menu-popover" id="sidebarMenuPanel">
+      <div class="menu-popover active" id="sidebarMenuPanel">
         <div class="menu-title"><span class="menu-title-icon">≋</span><span>RiverMeasurement</span></div>
         <div class="nav-label">Menu</div>
         <nav class="nav">
@@ -981,7 +1060,7 @@
           <a href="#charts">⌁ Grafik Sensor</a>
           <a href="#logs">☷ Log Data</a>
           <a href="#" id="navWarningBtn">⚠ Peringatan</a>
-          <a href="#filters">⚙ Pengaturan</a>
+          <a href="#settings">⚙ Pengaturan</a>
         </nav>
         <div class="sidebar-card">
           <h3>Peringatan Sungai</h3>
@@ -994,7 +1073,8 @@
       <section class="hero" id="dashboard">
         <div>
           <h1>Dashboard Monitoring Sungai</h1>
-          <p>Pemantauan level muka air, curah hujan, dan debit aliran untuk 6 node sensor. Data dummy masih digunakan.</div>
+          <p>Pemantauan level muka air, curah hujan, dan debit aliran untuk 6 node sensor. Data terbaru diambil dari database IoT dan grafik historis diolah dari data tersimpan.</p>
+        </div>
         <div class="hero-actions">
           <div class="auto-badge"><span class="dot"></span>Auto update aktif · 30 detik</div>
         </div>
@@ -1076,7 +1156,7 @@
         <div class="section-head">
           <div>
             <h2>Grafik Real-time dan Historis</h2>
-            <p>Grafik berubah mengikuti pilihan node dan rentang waktu.</p>
+            <p>Grafik mengikuti pilihan node, rentang waktu, dan tanggal yang dipilih.</p>
           </div>
         </div>
 
@@ -1108,7 +1188,7 @@
             <div class="chart-title">
               <div>
                 <h3>Curah Hujan</h3>
-                <p>Intensitas hujan per periode pengamatan.</p>
+                <p>Nilai 0 tetap ditampilkan sebagai kondisi tidak hujan.</p>
               </div>
             </div>
             <canvas id="rainChart" height="90"></canvas>
@@ -1118,13 +1198,14 @@
             <div class="chart-title">
               <div>
                 <h3>Flow Rate / Debit Aliran</h3>
-                <p>Perubahan debit aliran berdasarkan node terpilih.</p>
+                <p>Kosong jika sensor flow rate belum tersedia.</p>
               </div>
             </div>
             <canvas id="flowChart" height="90"></canvas>
           </div>
         </div>
       </section>
+
 
       <section id="logs">
         <div class="section-head">
@@ -1141,6 +1222,8 @@
                 <tr>
                   <th>Node</th>
                   <th>Lokasi</th>
+                  <th>LevelMM</th>
+                  <th>ServerMax</th>
                   <th>Level Air</th>
                   <th>Curah Hujan</th>
                   <th>Flow Rate</th>
@@ -1154,8 +1237,55 @@
           </div>
         </div>
 
-        <p class="footer-note">Catatan desain: halaman ini masih memakai data dummy.</p>
+        <p class="footer-note">Catatan: Level air dihitung dari data MQTT <b>LevelMM</b> dikurangi <b>ServerMax</b> dari tabel konfigurasi, lalu dibagi 1000 agar menjadi meter. Nilai <b>-99</b> tidak ditampilkan sebagai angka karena berarti sensor tidak tersedia atau data belum masuk.</p>
       </section>
+      <section id="settings">
+        <div class="section-head">
+          <div>
+            <h2>Pengaturan ServerMax</h2>
+            <p>Ubah nilai ServerMax secara manual tanpa perlu mengedit coding Python.</p>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <div class="table-card">
+            <div class="chart-title">
+              <div>
+                <h3>Konfigurasi Node</h3>
+                <p>ServerMax dipakai bersama LevelMM dari MQTT untuk menghitung level air.</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="config-table">
+                <thead>
+                  <tr>
+                    <th>Node</th>
+                    <th>Lokasi</th>
+                    <th>ServerMax (mm)</th>
+                    <th>Sensor Hujan</th>
+                    <th>Sensor Flow</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="configTableBody">
+                  <tr><td colspan="6">Memuat konfigurasi...</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="config-message" id="configMessage">Catatan: setelah ServerMax diubah, nilai level air dihitung ulang dari LevelMM terbaru dan ServerMax baru. Data MQTT berikutnya juga akan memakai ServerMax baru saat masuk ke database.</div>
+          </div>
+
+          <div class="settings-note">
+            <h3>Rumus yang dipakai</h3>
+            <p><b>Level air (m) = (LevelMM - ServerMax) / 1000</b></p>
+            <p><b>LevelMM</b> berasal dari MQTT. <b>ServerMax</b> berasal dari tabel konfigurasi dan bisa diubah manual di dashboard ini.</p>
+            <p>Curah hujan bernilai <b>0</b> tetap ditampilkan di grafik sebagai titik/garis pada angka 0. Nilai <b>-99</b> berarti data tidak tersedia, bukan nol.</p>
+            <p>Flow rate masih ditampilkan sebagai belum ada sensor karena sensor debit belum tersedia.</p>
+          </div>
+        </div>
+      </section>
+
+
     </main>
   </div>
 
@@ -1181,6 +1311,11 @@
   </div>
 
   <script>
+    const LATEST_API_URL = "https://iot4environment.com/atmos/get_data_sungai.php";
+    const HISTORY_API_URL = "https://iot4environment.com/atmos/get_history_sungai_hourly.php";
+    const CONFIG_API_URL = "https://iot4environment.com/atmos/get_config_node.php";
+    const UPDATE_SERVERMAX_API_URL = "https://iot4environment.com/atmos/update_servermax.php";
+
     const STATUS = {
       normal: { label: 'Normal', color: '#21b36b', priority: 1 },
       waspada: { label: 'Waspada', color: '#eab308', priority: 2 },
@@ -1188,84 +1323,303 @@
       bahaya: { label: 'Bahaya', color: '#ef4444', priority: 4 }
     };
 
-    const nodeNames = [
-      'Amposari Bridge',
-      'Kali Babon Penggaron',
-      'Sendang Mulyo',
-      'Meteseh',
-      'Metro Bridge',
-      'Sikatak Bridge'
-    ];
-
     let selectedNode = 'all';
     let selectedRange = 'today';
-
-    let nodes = Array.from({ length: 6 }, (_, i) => generateNode(i + 1));
+    let nodes = [];
+    let historyRows = [];
+    let historyMap = {};
+    let configNodes = [];
     let charts = {};
 
-    function randomBetween(min, max, decimals = 1) {
-      return Number((Math.random() * (max - min) + min).toFixed(decimals));
+    function parseDateTime(value) {
+      if (!value) return new Date();
+      return new Date(String(value).replace(' ', 'T'));
     }
 
-    function getStatus(level) {
-      if (level >= 4.0) return 'bahaya';
-      if (level >= 3.1) return 'siaga';
-      if (level >= 2.2) return 'waspada';
-      return 'normal';
-    }
-
-    function generateNode(id) {
-      const level = randomBetween(1.1, 4.6, 2);
-      const rain = randomBetween(0, 46, 1);
-      const flow = randomBetween(18, 142, 1);
-      const online = Math.random() > 0.08;
-      return {
-        id,
-        name: `semarang_${String(id).padStart(2, '0')}`,
-        location: nodeNames[id - 1],
-        level,
-        rain,
-        flow,
-        online,
-        status: getStatus(level),
-        lastUpdate: new Date()
-      };
-    }
-
-    function mutateNodes() {
-      nodes = nodes.map(node => {
-        const level = Math.max(0.6, Math.min(4.9, node.level + randomBetween(-0.28, 0.33, 2)));
-        const rain = Math.max(0, Math.min(68, node.rain + randomBetween(-6, 8, 1)));
-        const flow = Math.max(8, Math.min(168, node.flow + randomBetween(-13, 16, 1)));
-        const online = Math.random() > 0.06;
-        return {
-          ...node,
-          level: Number(level.toFixed(2)),
-          rain: Number(rain.toFixed(1)),
-          flow: Number(flow.toFixed(1)),
-          online,
-          status: getStatus(level),
-          lastUpdate: new Date()
-        };
-      });
-      renderAll();
+    function formatNumber(value, decimals = 3) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return '-';
+      return number.toFixed(decimals).replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1');
     }
 
     function formatTime(date) {
+      if (!(date instanceof Date) || isNaN(date)) return '-';
       return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
 
     function formatDateTime(date) {
+      if (!(date instanceof Date) || isNaN(date)) return '-';
       return date.toLocaleString('id-ID', {
         day: '2-digit', month: 'short', year: 'numeric',
         hour: '2-digit', minute: '2-digit', second: '2-digit'
       });
     }
 
+    function formatDateForApi(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function formatDateLabel(dateString) {
+      if (!dateString) return '-';
+      const [y, m, d] = dateString.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    function getDateRange() {
+      const startInput = document.getElementById('startDate');
+      const endInput = document.getElementById('endDate');
+      return {
+        startDate: startInput?.value || formatDateForApi(new Date()),
+        endDate: endInput?.value || formatDateForApi(new Date())
+      };
+    }
+
+    function isTodayRange() {
+      const today = formatDateForApi(new Date());
+      const { startDate, endDate } = getDateRange();
+      return startDate === today && endDate === today;
+    }
+
+    function setActiveRange(range) {
+      selectedRange = range;
+      document.querySelectorAll('.range-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.range === range);
+      });
+    }
+
+    function isRecent(date) {
+      if (!(date instanceof Date) || isNaN(date)) return false;
+      const diffMs = Date.now() - date.getTime();
+      return diffMs <= 2 * 60 * 60 * 1000;
+    }
+
+    function normalizeStatus(status, level) {
+      if (status && STATUS[status]) return status;
+      if (level >= 4.0) return 'bahaya';
+      if (level >= 3.1) return 'siaga';
+      if (level >= 2.2) return 'waspada';
+      return 'normal';
+    }
+
+    function formatRainText(node) {
+      if (!node.hasRain) return 'Tidak tersedia';
+      if (node.rain === -99 || node.rain === null || node.rain === undefined || Number.isNaN(node.rain)) return 'Data belum masuk';
+      return `${formatNumber(node.rain, 2)} mm`;
+    }
+
+    function formatFlowText(node) {
+      if (!node.hasFlow) return 'Belum ada sensor';
+      if (node.flow === -99 || node.flow === null || node.flow === undefined || Number.isNaN(node.flow)) return 'Data belum masuk';
+      return `${formatNumber(node.flow, 2)} m³/s`;
+    }
+
+    function formatLevelText(node) {
+      return `${formatNumber(node.level, 3)} m`;
+    }
+
+    function formatLevelMmText(node) {
+      return `${formatNumber(node.levelMm, 0)} mm`;
+    }
+
+    function formatServerMaxText(node) {
+      return `${formatNumber(node.serverMax, 0)} mm`;
+    }
+
+    function getSelectedNodeData() {
+      return nodes.find(n => String(n.id) === selectedNode);
+    }
+
+    async function fetchRiverData() {
+      try {
+        const response = await fetch(LATEST_API_URL, { cache: 'no-store' });
+        const result = await response.json();
+
+        if (result.status !== 'success') {
+          console.error('API latest error:', result);
+          return;
+        }
+
+        nodes = (result.data || []).map((item, index) => {
+          const lastUpdate = parseDateTime(item.timestamp);
+          const level = Number(item.level_air);
+          return {
+            id: index + 1,
+            name: item.node_id,
+            location: item.location || '-',
+            levelMm: Number(item.level_mm),
+            serverMax: Number(item.server_max),
+            level,
+            rain: Number(item.curah_hujan),
+            flow: item.flow_rate === null ? null : Number(item.flow_rate),
+            hasRain: Number(item.has_rain) === 1,
+            hasFlow: Number(item.has_flow) === 1,
+            online: isRecent(lastUpdate),
+            status: normalizeStatus(item.status, level),
+            lastUpdate
+          };
+        });
+
+        await renderAll();
+
+      } catch (error) {
+        console.error('Gagal ambil data sungai:', error);
+        const container = document.getElementById('nodeCards');
+        if (container && !nodes.length) {
+          container.innerHTML = `
+            <article class="node-card" style="--status-color:#ef4444; grid-column: 1 / -1; min-height: auto;">
+              <div class="node-title">
+                <h3>Gagal mengambil data</h3>
+                <span>Pastikan get_data_sungai.php bisa diakses dan koneksi internet aktif.</span>
+              </div>
+            </article>
+          `;
+        }
+      }
+    }
+
+    async function fetchHistoryData() {
+      try {
+        const selectedNodeData = getSelectedNodeData();
+        const nodeParam = selectedNode === 'all' ? 'all' : selectedNodeData?.name;
+        const { startDate, endDate } = getDateRange();
+
+        const url = `${HISTORY_API_URL}?range=${encodeURIComponent(selectedRange)}&node=${encodeURIComponent(nodeParam || 'all')}&start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}`;
+        const response = await fetch(url, { cache: 'no-store' });
+        const result = await response.json();
+
+        if (result.status !== 'success') {
+          console.error('API history error:', result);
+          historyRows = [];
+          return;
+        }
+
+        historyRows = result.data || [];
+        historyMap = {};
+
+        historyRows.forEach(row => {
+            historyMap[`${row.node_id}_${row.label}`] = row;
+        });
+
+      } catch (error) {
+        console.error('Gagal ambil data history:', error);
+        historyRows = [];
+      }
+    }
+
+
+    async function fetchConfigNodes() {
+      try {
+        const response = await fetch(CONFIG_API_URL, { cache: 'no-store' });
+        const result = await response.json();
+
+        if (result.status !== 'success') {
+          console.error('API konfigurasi error:', result);
+          renderConfigTableError('Gagal mengambil konfigurasi ServerMax.');
+          return;
+        }
+
+        configNodes = result.data || [];
+        renderConfigTable();
+      } catch (error) {
+        console.error('Gagal ambil konfigurasi node:', error);
+        renderConfigTableError('Gagal mengambil konfigurasi. Pastikan get_config_node.php sudah di-upload.');
+      }
+    }
+
+    function renderConfigTableError(message) {
+      const tbody = document.getElementById('configTableBody');
+      if (tbody) tbody.innerHTML = `<tr><td colspan="6">${message}</td></tr>`;
+    }
+
+    function renderConfigTable() {
+      const tbody = document.getElementById('configTableBody');
+      if (!tbody) return;
+
+      if (!configNodes.length) {
+        tbody.innerHTML = `<tr><td colspan="6">Konfigurasi belum tersedia.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = configNodes.map(item => `
+        <tr>
+          <td>${item.node_id}</td>
+          <td>${item.location || '-'}</td>
+          <td>
+            <input type="number" step="1" min="0" value="${formatNumber(item.server_max, 0)}" data-servermax-input="${item.node_id}" />
+          </td>
+          <td>${Number(item.has_rain) === 1 ? 'Ada' : 'Tidak ada'}</td>
+          <td>${Number(item.has_flow) === 1 ? 'Ada' : 'Belum ada'}</td>
+          <td><button class="save-config-btn" data-save-servermax="${item.node_id}">Simpan</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function setConfigMessage(message, type = '') {
+      const box = document.getElementById('configMessage');
+      if (!box) return;
+      box.textContent = message;
+      box.className = `config-message ${type}`.trim();
+    }
+
+    async function saveServerMax(nodeId) {
+      const input = document.querySelector(`[data-servermax-input="${nodeId}"]`);
+      const button = document.querySelector(`[data-save-servermax="${nodeId}"]`);
+      if (!input) return;
+
+      const serverMax = Number(input.value);
+      if (!Number.isFinite(serverMax)) {
+        setConfigMessage('ServerMax harus berupa angka.', 'error');
+        return;
+      }
+
+      try {
+        if (button) button.disabled = true;
+        setConfigMessage(`Menyimpan ServerMax ${nodeId}...`);
+
+        const response = await fetch(UPDATE_SERVERMAX_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ node_id: nodeId, server_max: serverMax })
+        });
+
+        const result = await response.json();
+
+        if (result.status !== 'success') {
+          setConfigMessage(result.msg || 'ServerMax gagal diperbarui.', 'error');
+          return;
+        }
+
+        setConfigMessage(`ServerMax ${nodeId} berhasil diperbarui menjadi ${formatNumber(serverMax, 0)} mm.`, 'success');
+        await fetchConfigNodes();
+        await fetchRiverData();
+      } catch (error) {
+        console.error('Gagal update ServerMax:', error);
+        setConfigMessage('Gagal update ServerMax. Pastikan update_servermax.php sudah di-upload.', 'error');
+      } finally {
+        if (button) button.disabled = false;
+      }
+    }
+
     function renderCards() {
       const container = document.getElementById('nodeCards');
+
+      if (!nodes.length) {
+        container.innerHTML = `
+          <article class="node-card" style="--status-color:#2f80ed; grid-column: 1 / -1; min-height: auto;">
+            <div class="node-title">
+              <h3>Memuat data...</h3>
+              <span>Sistem sedang mengambil data terbaru dari database.</span>
+            </div>
+          </article>
+        `;
+        return;
+      }
+
       container.innerHTML = nodes.map(node => {
-        const status = STATUS[node.status];
+        const status = STATUS[node.status] || STATUS.normal;
         return `
           <article class="node-card" style="--status-color:${status.color}">
             <div class="node-top">
@@ -1277,7 +1631,7 @@
             </div>
 
             <div class="metric-big">
-              <strong>${node.level}</strong><span>m</span>
+              <strong>${formatNumber(node.level, 3)}</strong><span>m</span>
             </div>
 
             <div class="connection ${node.online ? '' : 'offline'}">
@@ -1286,12 +1640,20 @@
 
             <div class="mini-grid">
               <div class="mini">
+                <label>LevelMM</label>
+                <b>${formatLevelMmText(node)}</b>
+              </div>
+              <div class="mini">
+                <label>ServerMax</label>
+                <b>${formatServerMaxText(node)}</b>
+              </div>
+              <div class="mini">
                 <label>Curah Hujan</label>
-                <b>${node.rain} mm</b>
+                <b>${formatRainText(node)}</b>
               </div>
               <div class="mini">
                 <label>Flow Rate</label>
-                <b>${node.flow} m³/s</b>
+                <b>${formatFlowText(node)}</b>
               </div>
               <div class="mini" style="grid-column: 1 / -1">
                 <label>Data Terakhir</label>
@@ -1305,15 +1667,23 @@
 
     function renderTable() {
       const tbody = document.getElementById('logTable');
+
+      if (!nodes.length) {
+        tbody.innerHTML = `<tr><td colspan="10">Data belum tersedia.</td></tr>`;
+        return;
+      }
+
       tbody.innerHTML = nodes.map(node => {
-        const status = STATUS[node.status];
+        const status = STATUS[node.status] || STATUS.normal;
         return `
           <tr>
             <td>${node.name}</td>
             <td>${node.location}</td>
-            <td>${node.level} m</td>
-            <td>${node.rain} mm</td>
-            <td>${node.flow} m³/s</td>
+            <td>${formatLevelMmText(node)}</td>
+            <td>${formatServerMaxText(node)}</td>
+            <td>${formatLevelText(node)}</td>
+            <td>${formatRainText(node)}</td>
+            <td>${formatFlowText(node)}</td>
             <td><span class="connection ${node.online ? '' : 'offline'}"><span class="dot"></span>${node.online ? 'Online' : 'Offline'}</span></td>
             <td><span class="status-pill" style="--pill-color:${status.color}"><span class="dot"></span>${status.label}</span></td>
             <td>${formatDateTime(node.lastUpdate)}</td>
@@ -1323,6 +1693,8 @@
     }
 
     function renderStatsAndAlert() {
+      if (!nodes.length) return;
+
       const counts = { normal: 0, waspada: 0, siaga: 0, bahaya: 0 };
       nodes.forEach(node => counts[node.status]++);
 
@@ -1334,9 +1706,9 @@
       `).join('');
 
       const riskiest = [...nodes].sort((a, b) => STATUS[b.status].priority - STATUS[a.status].priority || b.level - a.level)[0];
-      const status = STATUS[riskiest.status];
+      const status = STATUS[riskiest.status] || STATUS.normal;
       document.getElementById('alertTitle').textContent = `${status.label}: ${riskiest.name} - ${riskiest.location}`;
-      document.getElementById('alertMessage').textContent = `Level muka air ${riskiest.level} m, curah hujan ${riskiest.rain} mm, debit ${riskiest.flow} m³/s. Data terakhir diterima pukul ${formatTime(riskiest.lastUpdate)}.`;
+      document.getElementById('alertMessage').textContent = `Level muka air ${formatLevelText(riskiest)}, LevelMM ${formatLevelMmText(riskiest)}, ServerMax ${formatServerMaxText(riskiest)}. Data terakhir diterima pukul ${formatTime(riskiest.lastUpdate)}.`;
       document.querySelector('.alert-icon').style.background = `linear-gradient(135deg, ${status.color}, #152033)`;
     }
 
@@ -1352,9 +1724,17 @@
       const subtitle = document.getElementById('statusPanelSubtitle');
       const panel = document.getElementById('statusPanelContent');
 
+      if (!nodes.length) {
+        title.textContent = 'Ringkasan Risiko Node';
+        subtitle.textContent = 'Data sedang dimuat dari database.';
+        panel.innerHTML = `<div class="safe-empty"><h4>Memuat data...</h4><p>Tunggu sebentar sampai data terbaru berhasil dibaca.</p></div>`;
+        return;
+      }
+
       if (selectedNode !== 'all') {
-        const node = nodes.find(n => String(n.id) === selectedNode);
-        const status = STATUS[node.status];
+        const node = getSelectedNodeData();
+        if (!node) return;
+        const status = STATUS[node.status] || STATUS.normal;
         title.textContent = `Status ${node.name}`;
         subtitle.textContent = `${node.location} · update ${formatTime(node.lastUpdate)}`;
         panel.innerHTML = `
@@ -1362,7 +1742,8 @@
             <div class="big-status" style="--pill-color:${status.color}"><span class="dot"></span>${status.label}</div>
             <h4 style="color:${status.color}">${node.status === 'normal' ? 'Aman' : status.label}</h4>
             <p>${statusMeaning(node.status)}</p>
-            <p>Level muka air <b>${node.level} m</b>, curah hujan <b>${node.rain} mm/jam</b>, debit <b>${node.flow} m³/s</b>, sensor <b>${node.online ? 'online' : 'offline'}</b>.</p>
+            <p>Level muka air <b>${formatLevelText(node)}</b>, LevelMM <b>${formatLevelMmText(node)}</b>, ServerMax <b>${formatServerMaxText(node)}</b>.</p>
+            <p>Curah hujan <b>${formatRainText(node)}</b>, debit <b>${formatFlowText(node)}</b>, sensor <b>${node.online ? 'online' : 'offline'}</b>.</p>
           </div>
         `;
         return;
@@ -1386,12 +1767,12 @@
       }
 
       panel.innerHTML = riskyNodes.map(node => {
-        const status = STATUS[node.status];
+        const status = STATUS[node.status] || STATUS.normal;
         return `
           <div class="risk-item">
             <div>
               <strong>${node.name} - ${node.location}</strong>
-              <span>Level ${node.level} m · Hujan ${node.rain} mm/jam · Debit ${node.flow} m³/s</span>
+              <span>Level ${formatLevelText(node)} · Hujan ${formatRainText(node)} · Debit ${formatFlowText(node)}</span>
             </div>
             <span class="status-pill" style="--pill-color:${status.color}"><span class="dot"></span>${status.label}</span>
           </div>
@@ -1401,10 +1782,15 @@
 
     function renderWarningCenter() {
       const list = document.getElementById('warningList');
+      if (!nodes.length) {
+        list.innerHTML = `<div class="warning-item"><div><h3>Data belum tersedia</h3><p>Belum ada data node yang bisa ditampilkan.</p></div></div>`;
+        return;
+      }
+
       const sortedNodes = [...nodes].sort((a, b) => STATUS[b.status].priority - STATUS[a.status].priority || b.level - a.level);
 
       list.innerHTML = sortedNodes.map(node => {
-        const status = STATUS[node.status];
+        const status = STATUS[node.status] || STATUS.normal;
         const actionText = node.status === 'bahaya'
           ? 'Tindakan: kirim peringatan darurat dan pantau evakuasi titik rawan.'
           : node.status === 'siaga'
@@ -1417,7 +1803,7 @@
           <div class="warning-item">
             <div>
               <h3>${node.name} - ${node.location}</h3>
-              <p>Level ${node.level} m · Hujan ${node.rain} mm/jam · Debit ${node.flow} m³/s · ${node.online ? 'Sensor online' : 'Sensor offline'} · Update ${formatTime(node.lastUpdate)}</p>
+              <p>Level ${formatLevelText(node)} · LevelMM ${formatLevelMmText(node)} · ServerMax ${formatServerMaxText(node)} · Hujan ${formatRainText(node)} · Debit ${formatFlowText(node)} · ${node.online ? 'Sensor online' : 'Sensor offline'} · Update ${formatTime(node.lastUpdate)}</p>
               <p>${actionText}</p>
             </div>
             <span class="status-pill" style="--pill-color:${status.color}"><span class="dot"></span>${status.label}</span>
@@ -1426,120 +1812,173 @@
       }).join('');
     }
 
-    function makeLabels(range) {
+    function fixedLabels(range) {
+      if (range === 'today' || range === 'daily') return ['00:00', '06:00', '12:00', '18:00', 'Sekarang'];
       if (range === 'weekly') return ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-      if (range === 'monthly') return ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'];
+      if (range === 'monthly') return ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5'];
       if (range === 'yearly') return ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-      if (range === 'daily') return ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'];
-      return ['-3m', '-2.5m', '-2m', '-1.5m', '-1m', '-30d', 'Sekarang'];
+      return null;
     }
 
-    function buildSeries(metric, range) {
-      const labels = makeLabels(range);
-      const chosenNodes = selectedNode === 'all' ? nodes : nodes.filter(n => String(n.id) === selectedNode);
+    function chartLabels(range) {
+      const fixed = fixedLabels(range);
+      if (fixed) return fixed;
+
+      const labels = [];
+      historyRows.forEach(row => {
+        if (row.label && !labels.includes(row.label)) labels.push(row.label);
+      });
+
+      return labels;
+    }
+
+    function buildSeries(metric, labels) {
+      const chosenNodes = selectedNode === 'all'
+        ? nodes
+        : nodes.filter(n => String(n.id) === selectedNode);
+
+      const metricKey = metric === 'level'
+        ? 'level_air'
+        : metric === 'rain'
+          ? 'curah_hujan'
+          : 'flow_rate';
+
       return chosenNodes.map(node => {
-        const base = node[metric];
+        const data = labels.map(label => {
+          const found = historyMap[ `${node.name}_${label}` ];
+
+          if (metric === 'rain') {
+            if (!node.hasRain) return null;
+            if (!found) return 0;
+            const value = found[metricKey];
+            if (value === null || value === undefined || Number(value) < 0) return 0;
+            return Number(value);
+          }
+
+          if (metric === 'flow') {
+            if (!node.hasFlow) return null;
+            if (!found) return null;
+            const value = found[metricKey];
+            if (value === null || value === undefined || Number(value) < 0) return null;
+            return Number(value);
+          }
+
+          if (!found) return null;
+          const value = found[metricKey];
+          if (value === null || value === undefined) return null;
+          return Number(value);
+        });
+
         return {
           label: node.name,
-          data: labels.map((_, i) => {
-            const drift = Math.sin(i / 1.7 + node.id) * (metric === 'level' ? .35 : metric === 'rain' ? 8 : 18);
-            const noise = randomBetween(metric === 'level' ? -.18 : -4, metric === 'level' ? .18 : 5, 2);
-            const value = Math.max(0, base + drift + noise);
-            return Number(value.toFixed(metric === 'level' ? 2 : 1));
-          }),
-          tension: .42,
+          data,
+          tension: metric === 'rain' ? .25 : .42,
           borderWidth: 3,
-          pointRadius: 3,
-          fill: false
+          pointRadius: metric === 'rain' ? 5 : 4,
+          pointHoverRadius: metric === 'rain' ? 7 : 5,
+          fill: false,
+          spanGaps: false
         };
       });
     }
 
     function createOrUpdateChart(id, type, config) {
       const ctx = document.getElementById(id);
+
+      if (charts[id] && charts[id].config.type !== type) {
+        charts[id].destroy();
+        delete charts[id];
+      }
+
       if (charts[id]) {
         charts[id].data = config.data;
         charts[id].options = config.options;
         charts[id].update();
         return;
       }
+
       charts[id] = new Chart(ctx, { type, ...config });
     }
 
-    function commonOptions(unit) {
+    function allValuesEmpty(datasets) {
+  return !datasets.some(ds =>
+    ds.data.some(v =>
+      v !== null &&
+      v !== undefined &&
+      Number.isFinite(Number(v))
+    )
+  );
+}
+
+    function commonOptions(unit, emptyText = 'Tidak ada data pada rentang ini') {
       return {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
         plugins: {
           legend: { labels: { usePointStyle: true, boxWidth: 8, font: { family: 'Inter', weight: 700 } } },
           tooltip: {
             callbacks: {
-              label: context => `${context.dataset.label}: ${context.parsed.y} ${unit}`
+              label: context => {
+                if (context.parsed.y === null || context.parsed.y === undefined) return `${context.dataset.label}: tidak ada data`;
+                return `${context.dataset.label}: ${context.parsed.y} ${unit}`;
+              }
             }
           }
         },
         scales: {
-          x: { grid: { display: false }, ticks: { font: { family: 'Inter', weight: 700 } } },
-          y: { beginAtZero: true, grid: { color: 'rgba(29,46,80,.07)' }, ticks: { font: { family: 'Inter', weight: 700 }, callback: value => `${value}` } }
+          x: { grid: { display: false }, ticks: { font: { family: 'Inter', weight: 700 }, maxRotation: 0, minRotation: 0 } },
+          y: { beginAtZero: true, suggestedMax: 1, grid: { color: 'rgba(29,46,80,.07)' }, ticks: { font: { family: 'Inter', weight: 700 }, callback: value => `${value}` } }
         }
       };
     }
 
-    function renderCharts() {
-      const labels = makeLabels(selectedRange);
+    async function renderCharts() {
+      await fetchHistoryData();
+      const labels = chartLabels(selectedRange);
+
       const rangeLabel = document.querySelector(`.range-btn[data-range="${selectedRange}"]`)?.textContent || 'Custom';
-      const selectedNodeData = nodes.find(n => String(n.id) === selectedNode);
-      const nodeLabel = selectedNode === 'all' ? 'Semua Node' : `${selectedNodeData.name} - ${selectedNodeData.location}`;
-      document.getElementById('chartContext').textContent = `${nodeLabel} · ${rangeLabel}`;
+      const selectedNodeData = getSelectedNodeData();
+      const nodeLabel = selectedNode === 'all' ? 'Semua Node' : `${selectedNodeData?.name || '-'} - ${selectedNodeData?.location || '-'}`;
+      const { startDate, endDate } = getDateRange();
+      document.getElementById('chartContext').textContent = `${nodeLabel} · ${rangeLabel} · ${formatDateLabel(startDate)} - ${formatDateLabel(endDate)}`;
+
+      const levelDatasets = buildSeries('level', labels);
+      const rainDatasets = buildSeries('rain', labels);
+      const flowDatasets = buildSeries('flow', labels);
 
       createOrUpdateChart('levelChart', 'line', {
-        data: { labels, datasets: buildSeries('level', selectedRange) },
+        data: { labels, datasets: levelDatasets },
         options: commonOptions('m')
       });
 
-      createOrUpdateChart('rainChart', 'bar', {
-        data: { labels, datasets: buildSeries('rain', selectedRange).map(ds => ({ ...ds, borderWidth: 0, borderRadius: 8 })) },
+      createOrUpdateChart('rainChart', 'line', {
+        data: { labels, datasets: rainDatasets },
         options: commonOptions('mm')
       });
 
       createOrUpdateChart('flowChart', 'line', {
-        data: { labels, datasets: buildSeries('flow', selectedRange) },
+        data: { labels, datasets: flowDatasets },
         options: commonOptions('m³/s')
       });
 
       renderStatusPanel();
     }
 
-    function renderAll() {
+    async function renderAll() {
       document.getElementById('globalLastUpdate').textContent = formatDateTime(new Date());
       renderCards();
       renderTable();
       renderStatsAndAlert();
       renderWarningCenter();
       renderStatusPanel();
-      renderCharts();
+      await renderCharts();
     }
-
-    const sidebarMenuBtn = document.getElementById('sidebarMenuBtn');
-    const sidebarMenuPanel = document.getElementById('sidebarMenuPanel');
-
-    sidebarMenuBtn.addEventListener('click', event => {
-      event.stopPropagation();
-      sidebarMenuPanel.classList.toggle('active');
-    });
-
-    document.addEventListener('click', event => {
-      if (!sidebarMenuPanel.contains(event.target) && event.target !== sidebarMenuBtn) {
-        sidebarMenuPanel.classList.remove('active');
-      }
-    });
 
     document.querySelectorAll('.nav a').forEach(link => {
       link.addEventListener('click', event => {
         document.querySelectorAll('.nav a').forEach(item => item.classList.remove('active'));
         link.classList.add('active');
-
-        sidebarMenuPanel.classList.remove('active');
 
         if (link.id === 'navWarningBtn') {
           event.preventDefault();
@@ -1550,18 +1989,25 @@
       });
     });
 
-    document.getElementById('nodeFilter').addEventListener('change', event => {
+    document.getElementById('nodeFilter').addEventListener('change', async event => {
       selectedNode = event.target.value;
-      renderCharts();
+      await renderCharts();
     });
 
-    document.getElementById('rangeTabs').addEventListener('click', event => {
+    document.getElementById('rangeTabs').addEventListener('click', async event => {
       const button = event.target.closest('.range-btn');
       if (!button) return;
-      document.querySelectorAll('.range-btn').forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-      selectedRange = button.dataset.range;
-      renderCharts();
+
+      const range = button.dataset.range;
+      setActiveRange(range);
+
+      if (range === 'today') {
+        const todayString = formatDateForApi(new Date());
+        document.getElementById('startDate').value = todayString;
+        document.getElementById('endDate').value = todayString;
+      }
+
+      await renderCharts();
     });
 
     const warningModal = document.getElementById('warningModal');
@@ -1584,25 +2030,36 @@
         warningModal.setAttribute('aria-hidden', 'true');
       }
     });
-    document.getElementById('startDate').addEventListener('change', () => {
-      document.querySelectorAll('.range-btn').forEach(btn => btn.classList.remove('active'));
-      selectedRange = 'custom';
-      renderCharts();
+
+    document.getElementById('configTableBody').addEventListener('click', async event => {
+      const button = event.target.closest('[data-save-servermax]');
+      if (!button) return;
+      await saveServerMax(button.dataset.saveServermax);
     });
-    document.getElementById('endDate').addEventListener('change', () => {
-      document.querySelectorAll('.range-btn').forEach(btn => btn.classList.remove('active'));
-      selectedRange = 'custom';
-      renderCharts();
+
+    document.getElementById('startDate').addEventListener('change', async () => {
+      if (selectedRange === 'today' && !isTodayRange()) setActiveRange('daily');
+      await renderCharts();
+    });
+
+    document.getElementById('endDate').addEventListener('change', async () => {
+      if (selectedRange === 'today' && !isTodayRange()) setActiveRange('today');
+      await renderCharts();
     });
 
     const today = new Date();
-    const sevenDaysAgo = new Date(today);
-    sevenDaysAgo.setDate(today.getDate() - 7);
-    document.getElementById('endDate').valueAsDate = today;
-    document.getElementById('startDate').valueAsDate = sevenDaysAgo;
+    document.getElementById('endDate').value = formatDateForApi(today);
+    document.getElementById('startDate').value = formatDateForApi(today);
+    setActiveRange('today');
 
-    renderAll();
-    setInterval(mutateNodes, 30000);
+    async function initDashboard() {
+      await fetchConfigNodes();
+      await fetchRiverData();
+      setInterval(fetchRiverData, 30000);
+      setInterval(fetchConfigNodes, 60000);
+    }
+
+    initDashboard();
   </script>
 </body>
 </html>
