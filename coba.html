@@ -1444,7 +1444,7 @@
 
         nodes = (result.data || []).map((item, index) => {
           const lastUpdate = parseDateTime(item.timestamp);
-          const level = Number(item.level_air);
+          const level = Math.max(0, Number(item.level_air));
           return {
             id: index + 1,
             name: item.node_id,
